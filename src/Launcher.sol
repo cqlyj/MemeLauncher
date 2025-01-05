@@ -53,6 +53,7 @@ contract Launcher is Ownable {
     error Launcher__WithdrawalAmountTooHigh(uint256 balance);
     error Launcher__WithdrawalFailed();
     error Launcher__NotLaunchedYet();
+    error Launcher__TransferFailed();
 
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
@@ -138,7 +139,10 @@ contract Launcher is Ownable {
         }
 
         // Transfer the tokens to the buyer
-        MemeToken(meme).transfer(msg.sender, amount);
+        bool success = MemeToken(meme).transfer(msg.sender, amount);
+        if (!success) {
+            revert Launcher__TransferFailed();
+        }
 
         emit MemeBought(meme, msg.sender, amount);
     }
@@ -153,7 +157,15 @@ contract Launcher is Ownable {
             revert Launcher__NotLaunchedYet();
         }
 
-        MemeToken(meme).transfer(sale.creator, sale.sold);
+        bool transferSuccess = MemeToken(meme).transfer(
+            sale.creator,
+            sale.sold
+        );
+        if (!transferSuccess) {
+            revert Launcher__TransferFailed();
+        }
+
+        // slither-disable-next-line arbitrary-send-eth
         (bool success, ) = sale.creator.call{value: sale.ethRaised}("");
         if (!success) {
             revert Launcher__WithdrawalFailed();
