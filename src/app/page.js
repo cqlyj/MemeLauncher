@@ -5,6 +5,7 @@ import List from "../components/List";
 import { useState, useEffect } from "react";
 import { Contract, ethers } from "ethers";
 import { getContractData } from "@/constants";
+import images from "./images.json";
 
 export default function Home() {
   const [provider, setProvider] = useState(null);
@@ -12,6 +13,7 @@ export default function Home() {
   const [launcher, setLauncher] = useState(null);
   const [fee, setFee] = useState(0);
   const [showCreate, setShowCreate] = useState(false);
+  const [memes, setMemes] = useState([]);
 
   function toggleCreate() {
     showCreate ? setShowCreate(false) : setShowCreate(true);
@@ -31,6 +33,36 @@ export default function Home() {
     setLauncher(launcher);
     const fee = await launcher.getFee();
     setFee(fee);
+
+    const totalMemes = await launcher.getTotalMemes();
+    const memes = [];
+
+    for (let i = 0; i < totalMemes; i++) {
+      // for now the images are pre-defined
+      // only 6 images are available
+      // this will be updated in the future
+      if (i === 6) {
+        break;
+      }
+
+      const memeSale = await launcher.getMemeSale(i);
+      console.log(memeSale);
+
+      const meme = {
+        meme: memeSale.meme,
+        name: memeSale.name,
+        creator: memeSale.creator,
+        sold: memeSale.sold,
+        ethRaised: memeSale.ethRaised,
+        isOpen: memeSale.isOpen,
+        image: images[i],
+      };
+      memes.push(meme);
+
+      setMemes(memes.reverse());
+
+      console.log(memes);
+    }
   }
 
   useEffect(() => {
