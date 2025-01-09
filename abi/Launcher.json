@@ -64,9 +64,9 @@
     "name": "getMemeSale",
     "inputs": [
       {
-        "name": "meme",
-        "type": "address",
-        "internalType": "address"
+        "name": "index",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "outputs": [
