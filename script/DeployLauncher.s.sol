@@ -2,7 +2,7 @@
 pragma solidity 0.8.27;
 
 import {Script, console} from "forge-std/Script.sol";
-import {Launcher} from "src/Launcher.sol";
+import {Launcher} from "src/contracts/Launcher.sol";
 
 contract DeployLauncher is Script {
     Launcher public launcher;
