@@ -228,8 +228,10 @@ contract Launcher is Ownable {
         return s_memes;
     }
 
-    function getMemeSale(address meme) external view returns (MemeSale memory) {
-        return s_memeToSale[meme];
+    function getMemeSale(
+        uint256 index
+    ) external view returns (MemeSale memory) {
+        return s_memeToSale[address(s_memes[index])];
     }
 
     function getTotalMemes() external view returns (uint256) {
