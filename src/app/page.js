@@ -2,6 +2,8 @@
 
 import Header from "../components/Header";
 import List from "../components/List";
+import Meme from "../components/Meme";
+import Trade from "../components/Trade";
 import { useState, useEffect } from "react";
 import { Contract, ethers } from "ethers";
 import { getContractData } from "@/constants";
@@ -13,10 +15,17 @@ export default function Home() {
   const [launcher, setLauncher] = useState(null);
   const [fee, setFee] = useState(0);
   const [showCreate, setShowCreate] = useState(false);
+  const [showTrade, setShowTrade] = useState(false);
   const [memes, setMemes] = useState([]);
+  const [meme, setMeme] = useState(null);
 
   function toggleCreate() {
     showCreate ? setShowCreate(false) : setShowCreate(true);
+  }
+
+  function toggleTrade(meme) {
+    setMeme(meme);
+    showTrade ? setShowTrade(false) : setShowTrade(true);
   }
 
   async function loadBlockchainData() {
@@ -69,7 +78,7 @@ export default function Home() {
     if (window.ethereum) {
       loadBlockchainData();
     }
-  }, []);
+  }, [showCreate, showTrade]);
 
   return (
     <div className="page">
@@ -87,16 +96,39 @@ export default function Home() {
               : "[ Create A New MEME ]"}
           </button>
         </div>
-      </main>
+        <div className="listings">
+          <h1>new listings</h1>
 
-      {showCreate && (
-        <List
-          toggleCreate={toggleCreate}
-          fee={fee}
-          provider={provider}
-          launcher={launcher}
-        />
-      )}
+          <div className="tokens">
+            {!account ? (
+              <p>please connect wallet</p>
+            ) : memes.length === 0 ? (
+              <p>No tokens listed</p>
+            ) : (
+              memes.map((meme, index) => (
+                <Meme toggleTrade={toggleTrade} meme={meme} key={index} />
+              ))
+            )}
+          </div>
+        </div>
+        {showCreate && (
+          <List
+            toggleCreate={toggleCreate}
+            fee={fee}
+            provider={provider}
+            launcher={launcher}
+          />
+        )}
+
+        {showTrade && (
+          <Trade
+            toggleTrade={toggleTrade}
+            meme={meme}
+            provider={provider}
+            launcher={launcher}
+          />
+        )}
+      </main>
     </div>
   );
 }
