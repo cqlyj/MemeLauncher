@@ -224,6 +224,10 @@ contract Launcher is Ownable {
                                 GETTERS
     //////////////////////////////////////////////////////////////*/
 
+    function getCost(uint256 sold) external pure returns (uint256) {
+        return (STEP * sold) / INCREMENT + FLOOR;
+    }
+
     function getMemes() external view returns (MemeToken[] memory) {
         return s_memes;
     }
@@ -246,5 +250,41 @@ contract Launcher is Ownable {
         address meme
     ) external view returns (MemeSale memory) {
         return s_memeToSale[meme];
+    }
+
+    function getAllowedAmountToBuy() external pure returns (uint256) {
+        return ALLOWED_AMOUNT_TO_BUY;
+    }
+
+    function getTargetValue() external pure returns (uint256) {
+        return TARGET_VALUE;
+    }
+
+    function getPrecision() external pure returns (uint256) {
+        return PRECISION;
+    }
+
+    function getStep() external pure returns (uint256) {
+        return STEP;
+    }
+
+    function getFloor() external pure returns (uint256) {
+        return FLOOR;
+    }
+
+    function getIncrement() external pure returns (uint256) {
+        return INCREMENT;
+    }
+
+    function getMinBuyAmount() external pure returns (uint256) {
+        return MIN_BUT_AMOUNT;
+    }
+
+    function getMaxBuyAmount() external pure returns (uint256) {
+        return MAX_BUY_AMOUNT;
+    }
+
+    function getInitialSupply() external pure returns (uint256) {
+        return INITIAL_SUPPLY;
     }
 }
