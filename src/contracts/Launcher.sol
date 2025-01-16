@@ -43,6 +43,8 @@ contract Launcher is Ownable {
     uint256 private s_totalMemes;
     MemeToken[] private s_memes;
     mapping(address memeAddress => MemeSale sale) private s_memeToSale;
+    PositionManager private immutable i_posm;
+    IAllowanceTransfer private immutable i_permit2;
 
     /*//////////////////////////////////////////////////////////////
                                  STRUTS
@@ -86,9 +88,15 @@ contract Launcher is Ownable {
                               CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor(uint256 fee) Ownable(msg.sender) {
+    constructor(
+        uint256 fee,
+        address posm,
+        address permit2
+    ) Ownable(msg.sender) {
         i_fee = fee;
         s_totalMemes = 0;
+        i_posm = PositionManager(payable(posm));
+        i_permit2 = IAllowanceTransfer(payable(permit2));
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -165,7 +173,6 @@ contract Launcher is Ownable {
     }
 
     function launchMeme(address meme) external {
-        // For now we'll just transfer remaining memes and ETH raised to the creator.
         MemeSale memory sale = s_memeToSale[meme];
 
         if (sale.isOpen) {
@@ -251,28 +258,26 @@ contract Launcher is Ownable {
         mintParams[1] = abi.encode(pool.currency0, pool.currency1);
         uint256 deadline = block.timestamp + 60;
         // update the position manager later
-        PositionManager posm = PositionManager(payable(address(0)));
         params[1] = abi.encodeWithSelector(
             // update the position manager later
-            posm.modifyLiquidities.selector,
+            i_posm.modifyLiquidities.selector,
             abi.encode(actions, mintParams),
             deadline
         );
 
         // approve permit2 as a spender
         // update the permit2 address later
-        IAllowanceTransfer permit2 = IAllowanceTransfer(address(0));
-        IERC20(meme).approve(address(permit2), type(uint256).max);
+        IERC20(meme).approve(address(i_permit2), type(uint256).max);
 
         // approve `PositionManager` as a spender
-        permit2.approve(
+        i_permit2.approve(
             meme,
-            address(posm),
+            address(i_posm),
             type(uint160).max,
             type(uint48).max
         );
 
-        PositionManager(posm).multicall{value: token0Amount}(params);
+        PositionManager(i_posm).multicall{value: token0Amount}(params);
 
         // burn the rest tokens...
         MemeToken(meme).burn(INITIAL_SUPPLY - amount1Max);
