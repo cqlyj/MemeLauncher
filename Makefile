@@ -6,7 +6,7 @@ help:
 all: install build
 
 install:
-	@forge install OpenZeppelin/openzeppelin-contracts --no-commit
+	@forge install OpenZeppelin/openzeppelin-contracts --no-commit && forge install uniswap/v4-core --no-commit && forge install uniswap/v4-periphery --no-commit
 
 build:
 	@forge build && forge inspect src/contracts/Launcher.sol:Launcher abi > abi/Launcher.json 
