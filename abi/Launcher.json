@@ -6,6 +6,16 @@
         "name": "fee",
         "type": "uint256",
         "internalType": "uint256"
+      },
+      {
+        "name": "posm",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "permit2",
+        "type": "address",
+        "internalType": "address"
       }
     ],
     "stateMutability": "nonpayable"
@@ -283,6 +293,25 @@
       }
     ],
     "stateMutability": "pure"
+  },
+  {
+    "type": "function",
+    "name": "getStartingPriceX96",
+    "inputs": [
+      {
+        "name": "meme",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint160",
+        "internalType": "uint160"
+      }
+    ],
+    "stateMutability": "view"
   },
   {
     "type": "function",

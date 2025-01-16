@@ -10,7 +10,7 @@ contract DeployLauncher is Script {
 
     function run() public {
         vm.startBroadcast();
-        launcher = new Launcher(FEE);
+        launcher = new Launcher(FEE, address(0), address(0));
         vm.stopBroadcast();
 
         console.log("Launcher deployed at address: ", address(launcher));
