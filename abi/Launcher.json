@@ -438,7 +438,33 @@
   },
   {
     "type": "event",
+    "name": "MemeClosed",
+    "inputs": [
+      {
+        "name": "memeAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "MemeCreated",
+    "inputs": [
+      {
+        "name": "memeAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "MemeLaunched",
     "inputs": [
       {
         "name": "memeAddress",
