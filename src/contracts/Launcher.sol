@@ -83,6 +83,8 @@ contract Launcher is Ownable {
         address indexed buyer,
         uint256 indexed amount
     );
+    event MemeClosed(address indexed memeAddress);
+    event MemeLaunched(address indexed memeAddress);
 
     /*//////////////////////////////////////////////////////////////
                               CONSTRUCTOR
@@ -161,6 +163,9 @@ contract Launcher is Ownable {
 
         if (_memeNotOpenAnymore(sale.sold, sale.ethRaised)) {
             sale.isOpen = false;
+            // once get this event, our contract will call that launchMeme function
+            // front-end handle this or use Chainlink Automation
+            emit MemeClosed(meme);
         }
 
         // Transfer the tokens to the buyer
@@ -172,7 +177,10 @@ contract Launcher is Ownable {
         emit MemeBought(meme, msg.sender, amount);
     }
 
-    function launchMeme(address meme) external {
+    ///
+    /// @param meme The address of the meme token
+    /// @dev Once the meme is closed, the contract will launch the meme
+    function launchMeme(address meme) external onlyOwner {
         MemeSale memory sale = s_memeToSale[meme];
 
         if (sale.isOpen) {
@@ -278,9 +286,10 @@ contract Launcher is Ownable {
         );
 
         PositionManager(i_posm).multicall{value: token0Amount}(params);
-
         // burn the rest tokens...
         MemeToken(meme).burn(INITIAL_SUPPLY - amount1Max);
+
+        emit MemeLaunched(meme);
     }
 
     function getStartingPriceX96(address meme) public view returns (uint160) {
